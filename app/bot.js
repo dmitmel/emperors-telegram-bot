@@ -3,6 +3,7 @@ const Telegraf = require('telegraf');
 const commandParts = require('telegraf-command-parts');
 
 const adminAccess = require('./middleware/admin-access');
+const addMembers = require('./middleware/add-members');
 const messageLogger = require('./middleware/message-logger');
 
 module.exports = class Bot {
@@ -23,10 +24,14 @@ module.exports = class Bot {
   }
 
   _loadMiddleware() {
+    let client = this.client;
+
     // log received messages
-    this.client.on('message', messageLogger());
+    client.on('message', messageLogger());
+    // don't allow non-admins add members
+    client.on('message', addMembers());
     // allow commands only for admins
-    this.client.command(
+    client.command(
       adminAccess({
         onAccessDenied(ctx) {
           // send video with angry R2-D2
@@ -35,7 +40,7 @@ module.exports = class Bot {
       })
     );
     // parse commands only if user has access to them
-    this.client.command(commandParts());
+    client.command(commandParts());
   }
 
   start() {
