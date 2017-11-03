@@ -1,4 +1,4 @@
-# [emperors-telegram-bot](https://t.me/emperors_bot)
+# [emperors-telegram-bot](https://t.me/r2d2astrobot)
 
 ![logo](https://lumiere-a.akamaihd.net/v1/images/open-uri20150608-27674-g1ckv1_09156b17.jpeg?region=0%2C0%2C1200%2C674)
 
@@ -19,7 +19,10 @@ contribute by doing this.
 
 ## Features
 
-_TODO_
+* Friendly message logger
+* Kick members added by non-admins
+* Allow commands only for admins
+* Cool `/say` command
 
 ## License
 

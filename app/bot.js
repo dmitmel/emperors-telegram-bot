@@ -25,7 +25,7 @@ module.exports = class Bot extends Telegraf {
   _loadMiddleware() {
     // log received messages
     this.on('message', messageLogger());
-    // don't allow non-admins to add members
+    // kick members added by non-admins
     this.on('message', addMembers());
     // allow commands only for admins
     this.command(
