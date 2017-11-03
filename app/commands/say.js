@@ -1,4 +1,6 @@
 module.exports = () => ctx => {
   ctx.deleteMessage(ctx.message.id);
-  ctx.reply(ctx.state.command.args);
+
+  let msg = ctx.state.command.args;
+  if (msg) ctx.reply(msg);
 };
