@@ -9,10 +9,8 @@ const messageLogger = require('./middleware/message-logger');
 const say = require('./commands/say');
 
 module.exports = class Bot extends Telegraf {
-  constructor({ token }) {
-    super(token);
-    log(`token: ${token}`);
-
+  constructor({ token, accessDenied }) {
+    super(token, { accessDenied });
     this._getInfo();
     this._loadMiddleware();
   }
@@ -32,10 +30,7 @@ module.exports = class Bot extends Telegraf {
     // allow commands only for admins
     this.command(
       adminAccess({
-        onAccessDenied(ctx) {
-          // send video with angry R2-D2
-          ctx.reply('https://youtu.be/B6mh45mA_JY');
-        }
+        onAccessDenied: ctx => ctx.reply(this.options.accessDenied)
       })
     );
     // parse commands only if user has access to them
