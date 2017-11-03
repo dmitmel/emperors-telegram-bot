@@ -8,32 +8,29 @@ const messageLogger = require('./middleware/message-logger');
 
 const say = require('./commands/say');
 
-module.exports = class Bot {
+module.exports = class Bot extends Telegraf {
   constructor({ token }) {
+    super(token);
     log('token: %s', token);
 
-    this.client = new Telegraf(token);
     this._getInfo();
     this._loadMiddleware();
   }
 
   _getInfo() {
-    let telegram = this.client.telegram;
-    telegram.getMe().then(({ username }) => {
-      this.client.options.username = username;
+    this.telegram.getMe().then(({ username }) => {
+      this.options.username = username;
       log('connected to bot @%s', username);
     });
   }
 
   _loadMiddleware() {
-    let client = this.client;
-
     // log received messages
-    client.on('message', messageLogger());
-    // don't allow non-admins add members
-    client.on('message', addMembers());
+    this.on('message', messageLogger());
+    // don't allow non-admins to add members
+    this.on('message', addMembers());
     // allow commands only for admins
-    client.command(
+    this.command(
       adminAccess({
         onAccessDenied(ctx) {
           // send video with angry R2-D2
@@ -42,13 +39,13 @@ module.exports = class Bot {
       })
     );
     // parse commands only if user has access to them
-    client.command(commandParts());
+    this.command(commandParts());
 
-    client.command('say', say());
+    this.command('say', say());
   }
 
   start() {
-    this.client.startPolling();
+    this.startPolling();
     log('started');
   }
 };
