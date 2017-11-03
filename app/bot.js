@@ -11,7 +11,7 @@ const say = require('./commands/say');
 module.exports = class Bot extends Telegraf {
   constructor({ token }) {
     super(token);
-    log('token: %s', token);
+    log(`token: ${token}`);
 
     this._getInfo();
     this._loadMiddleware();
@@ -20,7 +20,7 @@ module.exports = class Bot extends Telegraf {
   _getInfo() {
     this.telegram.getMe().then(({ username }) => {
       this.options.username = username;
-      log('connected to bot @%s', username);
+      log(`connected to bot @${username}`);
     });
   }
 
