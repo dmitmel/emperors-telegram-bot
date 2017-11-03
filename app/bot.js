@@ -6,6 +6,8 @@ const adminAccess = require('./middleware/admin-access');
 const addMembers = require('./middleware/add-members');
 const messageLogger = require('./middleware/message-logger');
 
+const say = require('./commands/say');
+
 module.exports = class Bot {
   constructor({ token }) {
     log('token: %s', token);
@@ -41,6 +43,8 @@ module.exports = class Bot {
     );
     // parse commands only if user has access to them
     client.command(commandParts());
+
+    client.command('say', say());
   }
 
   start() {
