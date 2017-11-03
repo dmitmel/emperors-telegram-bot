@@ -30,7 +30,9 @@ module.exports = class Bot extends Telegraf {
     // allow commands only for admins
     this.command(
       adminAccess({
-        onAccessDenied: ctx => ctx.reply(this.options.accessDenied)
+        onAccessDenied: ctx => {
+          ctx.reply(this.options.accessDenied);
+        }
       })
     );
     // parse commands only if user has access to them
