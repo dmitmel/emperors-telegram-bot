@@ -34,7 +34,7 @@ module.exports = class Bot extends Telegraf {
       adminAccess({
         onAccessDenied(ctx) {
           // send video with angry R2-D2
-          ctx.reply('https://youtu.be/aX6OfhJMWGk');
+          ctx.reply('https://youtu.be/B6mh45mA_JY');
         }
       })
     );
