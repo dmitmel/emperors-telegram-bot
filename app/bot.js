@@ -3,7 +3,6 @@ const Telegraf = require('telegraf');
 const commandParts = require('telegraf-command-parts');
 
 const adminAccess = require('./middleware/admin-access');
-const addMembers = require('./middleware/add-members');
 const messageLogger = require('./middleware/message-logger');
 
 const say = require('./commands/say');
@@ -26,7 +25,15 @@ module.exports = class Bot extends Telegraf {
     // log received messages
     this.on('message', messageLogger());
     // kick members added by non-admins
-    this.on('message', addMembers());
+    this.on(
+      'new_chat_members',
+      adminAccess({
+        onAccessDenied: ctx => {
+          let newMembers = ctx.message.new_chat_members;
+          newMembers.forEach(newMember => ctx.kickChatMember(newMember.id));
+        }
+      })
+    );
     // allow commands only for admins
     this.command(
       adminAccess({
