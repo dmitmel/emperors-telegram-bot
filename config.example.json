@@ -1,4 +1,5 @@
 {
   "token": "",
-  "accessDenied": "ACCESS DENIED!!!"
+  "accessDenied": "ACCESS DENIED!!!",
+  "db": "db.json"
 }

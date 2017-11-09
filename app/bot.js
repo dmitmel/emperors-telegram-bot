@@ -2,14 +2,17 @@ const log = require('debug')('emperors-bot');
 const Telegraf = require('telegraf');
 const commandParts = require('telegraf-command-parts');
 
+const config = require('../config.json');
+
 const adminAccess = require('./middleware/admin-access');
 const messageLogger = require('./middleware/message-logger');
-
 const say = require('./commands/say');
 
+const db = require('./db');
+
 module.exports = class Bot extends Telegraf {
-  constructor({ token, accessDenied }) {
-    super(token, { accessDenied });
+  constructor() {
+    super(config.token);
     this._getInfo();
     this._loadMiddleware();
   }
@@ -38,7 +41,7 @@ module.exports = class Bot extends Telegraf {
     this.command(
       adminAccess({
         onAccessDenied: ctx => {
-          ctx.reply(this.options.accessDenied);
+          ctx.reply(config.accessDenied);
         }
       })
     );
