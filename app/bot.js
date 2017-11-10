@@ -6,9 +6,9 @@ const config = require('../config.json');
 
 const adminAccess = require('./middleware/admin-access');
 const messageLogger = require('./middleware/message-logger');
+const deleteMuted = require('./middleware/delete-muted');
+const { mute, muted, unmute } = require('./commands/mute');
 const say = require('./commands/say');
-
-const db = require('./db');
 
 module.exports = class Bot extends Telegraf {
   constructor() {
@@ -37,6 +37,8 @@ module.exports = class Bot extends Telegraf {
         }
       })
     );
+    // delete messages from muted users
+    this.on('message', deleteMuted());
     // allow commands only for admins
     this.command(
       adminAccess({
@@ -49,6 +51,9 @@ module.exports = class Bot extends Telegraf {
     this.command(commandParts());
 
     this.command('say', say());
+    this.command('mute', mute());
+    this.command('muted', muted());
+    this.command('unmute', unmute());
   }
 
   start() {

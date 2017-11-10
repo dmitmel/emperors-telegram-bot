@@ -1,7 +1,8 @@
 const { isMessageFromAdmin } = require('../utils/is-admin');
 
 module.exports = ({ onAccessDenied } = {}) => (ctx, next) => {
-  if (ctx.chat.type === 'private') return next();
+  if (ctx.chat.type === 'private')
+    return onAccessDenied && onAccessDenied(ctx, next);
 
   return isMessageFromAdmin(ctx).then(
     hasAccess =>
