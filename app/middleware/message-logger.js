@@ -9,8 +9,8 @@ function getMessageType(msg) {
 function formatMessageTime({ date }) {
   // date is multiplied by 1000 to convert seconds to milliseconds
   date = new Date(date * 1000);
-  let hours = `0${date.getHours()}`.substr(-2);
-  let minutes = `0${date.getMinutes()}`.substr(-2);
+  const hours = `0${date.getHours()}`.substr(-2);
+  const minutes = `0${date.getMinutes()}`.substr(-2);
   // time in the HH:MM format
   return `${hours}:${minutes}`;
 }
@@ -35,14 +35,14 @@ function formatChat({ type, title }) {
 }
 
 module.exports = () => (ctx, next) => {
-  let msg = ctx.message;
-  let type = getMessageType(msg);
+  const msg = ctx.message;
+  const type = getMessageType(msg);
 
   if (type) {
-    let time = formatMessageTime(msg);
-    let user = formatUser(ctx.from);
-    let chat = formatChat(ctx.chat);
-    let contents = type === 'text' ? msg.text : `(${type})`;
+    const time = formatMessageTime(msg);
+    const user = formatUser(ctx.from);
+    const chat = formatChat(ctx.chat);
+    const contents = type === 'text' ? msg.text : `(${type})`;
     log(`[${time}] ${user} in ${chat}: ${contents}`);
   }
 

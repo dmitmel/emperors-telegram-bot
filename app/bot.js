@@ -32,7 +32,7 @@ module.exports = class Bot extends Telegraf {
       'new_chat_members',
       adminAccess({
         onAccessDenied: ctx => {
-          let newMembers = ctx.message.new_chat_members;
+          const newMembers = ctx.message.new_chat_members;
           newMembers.forEach(({ id }) => ctx.kickChatMember(id));
         }
       })

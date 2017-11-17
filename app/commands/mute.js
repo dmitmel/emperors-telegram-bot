@@ -2,7 +2,7 @@ const db = require('../db');
 
 module.exports = {
   mute: () => ctx => {
-    let user = ctx.state.command.args;
+    const user = ctx.state.command.args;
     if (user) {
       db
         .get('muted')
@@ -12,7 +12,7 @@ module.exports = {
   },
 
   muted: () => ctx => {
-    let muted = db
+    const muted = db
       .get('muted')
       .map(user => `@${user}`)
       .join(', ')
@@ -21,7 +21,7 @@ module.exports = {
   },
 
   unmute: () => ctx => {
-    let user = ctx.state.command.args;
+    const user = ctx.state.command.args;
     if (user) {
       db
         .get('muted')
