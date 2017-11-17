@@ -5,6 +5,7 @@ const commandParts = require('telegraf-command-parts');
 const config = require('../config.json').bot;
 
 const adminAccess = require('./middleware/admin-access');
+const allowedChats = require('./middleware/allowed-chats');
 const messageLogger = require('./middleware/message-logger');
 const deleteMuted = require('./middleware/delete-muted');
 const { mute, muted, unmute } = require('./commands/mute');
@@ -19,6 +20,13 @@ module.exports = class Bot extends Telegraf {
   _loadMiddleware() {
     // log received messages
     this.on('message', messageLogger());
+    // leave not allowed groups
+    this.on(
+      'new_chat_members',
+      allowedChats({
+        getBotID: () => this.options.id
+      })
+    );
     // kick members added by non-admins
     this.on(
       'new_chat_members',
@@ -44,8 +52,9 @@ module.exports = class Bot extends Telegraf {
 
   start() {
     log('starting');
-    this.telegram.getMe().then(({ username }) => {
+    this.telegram.getMe().then(({ username, id }) => {
       this.options.username = username;
+      this.options.id = id;
       log(`connected to bot @${username}`);
       this.startPolling();
       log('started polling');

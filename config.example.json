@@ -1,6 +1,7 @@
 {
   "bot": {
-    "token": ""
+    "token": "",
+    "allowedChats": [123, 456, 789]
   },
   "db": {
     "path": "db.json"

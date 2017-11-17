@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "debug": "^3.1.0",
+    "lodash": "^4.17.4",
     "lowdb": "^1.0.0",
     "supports-color": "^5.0.0",
     "telegraf": "^3.14.1",
