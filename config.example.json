@@ -1,7 +1,6 @@
 {
   "bot": {
-    "token": "",
-    "accessDenied": "ACCESS DENIED!!!"
+    "token": ""
   },
   "db": {
     "path": "db.json"

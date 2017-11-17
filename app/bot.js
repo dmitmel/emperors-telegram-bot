@@ -32,13 +32,7 @@ module.exports = class Bot extends Telegraf {
     // delete messages from muted users
     this.on('message', deleteMuted());
     // allow commands only for admins
-    this.command(
-      adminAccess({
-        onAccessDenied: ctx => {
-          ctx.reply(config.accessDenied);
-        }
-      })
-    );
+    this.command(adminAccess());
     // parse commands only if user has access to them
     this.command(commandParts());
 
