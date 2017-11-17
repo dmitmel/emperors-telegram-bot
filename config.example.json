@@ -1,5 +1,9 @@
 {
-  "token": "",
-  "accessDenied": "ACCESS DENIED!!!",
-  "dbPath": "db.json"
+  "bot": {
+    "token": "",
+    "accessDenied": "ACCESS DENIED!!!"
+  },
+  "db": {
+    "path": "db.json"
+  }
 }

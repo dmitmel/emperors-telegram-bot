@@ -2,7 +2,7 @@ const log = require('debug')('emperors-bot');
 const Telegraf = require('telegraf');
 const commandParts = require('telegraf-command-parts');
 
-const config = require('../config.json');
+const config = require('../config.json').bot;
 
 const adminAccess = require('./middleware/admin-access');
 const messageLogger = require('./middleware/message-logger');
