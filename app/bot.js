@@ -13,15 +13,7 @@ const say = require('./commands/say');
 module.exports = class Bot extends Telegraf {
   constructor() {
     super(config.token);
-    this._getInfo();
     this._loadMiddleware();
-  }
-
-  _getInfo() {
-    this.telegram.getMe().then(({ username }) => {
-      this.options.username = username;
-      log(`connected to bot @${username}`);
-    });
   }
 
   _loadMiddleware() {
@@ -33,7 +25,7 @@ module.exports = class Bot extends Telegraf {
       adminAccess({
         onAccessDenied: ctx => {
           let newMembers = ctx.message.new_chat_members;
-          newMembers.forEach(newMember => ctx.kickChatMember(newMember.id));
+          newMembers.forEach(({ id }) => ctx.kickChatMember(id));
         }
       })
     );
@@ -57,7 +49,12 @@ module.exports = class Bot extends Telegraf {
   }
 
   start() {
-    this.startPolling();
-    log('started');
+    log('starting');
+    this.telegram.getMe().then(({ username }) => {
+      this.options.username = username;
+      log(`connected to bot @${username}`);
+      this.startPolling();
+      log('started polling');
+    });
   }
 };
