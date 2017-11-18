@@ -1,11 +1,9 @@
-const { isMessageFromAdmin } = require('../utils/is-admin');
+const { emperorID } = require('../../config.json').bot;
 
 module.exports = ({ onAccessDenied } = {}) => (ctx, next) => {
   if (ctx.chat.type === 'private')
     return onAccessDenied && onAccessDenied(ctx, next);
+  const hasAccess = ctx.from.id === emperorID;
 
-  return isMessageFromAdmin(ctx).then(
-    hasAccess =>
-      hasAccess ? next() : onAccessDenied && onAccessDenied(ctx, next)
-  );
+  return hasAccess ? next() : onAccessDenied && onAccessDenied(ctx, next);
 };

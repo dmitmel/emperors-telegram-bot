@@ -15,7 +15,10 @@ module.exports = ({ getBotID }) => ctx => {
       );
       ctx.leaveChat();
     } else {
-      ctx.reply('#Hello_there, everyone!');
+      ctx.reply(
+        '#Hello_there, everyone! Please, make me admin so ' +
+          'I have access to messages.'
+      );
     }
   }
 };

@@ -1,7 +1,8 @@
 {
   "bot": {
     "token": "",
-    "imperialChat": 123
+    "emperorID": 123,
+    "imperialChat": 456
   },
   "db": {
     "path": "db.json"
