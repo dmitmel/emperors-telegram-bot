@@ -4,7 +4,7 @@ const commandParts = require('telegraf-command-parts');
 
 const config = require('../config.json').bot;
 
-const adminAccess = require('./middleware/admin-access');
+const access = require('./middleware/access');
 const allowedChat = require('./middleware/allowed-chat');
 const messageLogger = require('./middleware/message-logger');
 const deleteMuted = require('./middleware/delete-muted');
@@ -31,7 +31,7 @@ module.exports = class Bot extends Telegraf {
     // kick members added by non-admins
     this.on(
       'new_chat_members',
-      adminAccess({
+      access.emperor({
         onAccessDenied: ctx => {
           const newMembers = ctx.message.new_chat_members;
           newMembers.forEach(({ id }) => ctx.kickChatMember(id));
@@ -43,7 +43,7 @@ module.exports = class Bot extends Telegraf {
     // allow commands only in the private chat
     this.command(inPrivate());
     // allow commands only for admins
-    this.command(adminAccess());
+    this.command(access.emperor());
     // parse commands only if user has access to them
     this.command(commandParts());
 
