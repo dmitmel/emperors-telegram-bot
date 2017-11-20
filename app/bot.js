@@ -24,9 +24,6 @@ module.exports = class Bot extends Telegraf {
     // log received messages
     this.on('message', messageLogger());
 
-    this.context.ask = ask;
-    this.on('message', ask.middleware());
-
     // leave not allowed chats
     this.on(
       'new_chat_members',
@@ -48,6 +45,10 @@ module.exports = class Bot extends Telegraf {
 
     // delete messages from muted users
     this.on('message', deleteMuted());
+
+    this.context.ask = ask;
+    this.command('cancel', ask.cancel());
+    this.on('message', ask.middleware());
 
     // allow commands only in the private chat
     this.command(inPrivate());

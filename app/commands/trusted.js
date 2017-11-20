@@ -46,7 +46,9 @@ module.exports.add = () => ctx => {
   ctx
     .ask({
       validator: msg => msg.contact,
-      onInvalid: () => ctx.reply('Please, send me a contact')
+      onInvalid: () => {
+        ctx.reply('Please, send me a contact');
+      }
     })
     .then(({ contact }) => {
       const userID = contact.user_id;

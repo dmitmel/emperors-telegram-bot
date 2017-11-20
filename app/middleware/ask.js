@@ -23,12 +23,23 @@ module.exports.middleware = () => (ctx, next) => {
       ? question.validator(answer)
       : true;
     if (isAnswerValid) {
-      question.onSuccess && question.onSuccess(answer);
       delete questions[chatID];
+      return question.onSuccess && question.onSuccess(answer);
     } else {
-      question.onInvalid && question.onInvalid(answer);
+      return question.onInvalid && question.onInvalid(answer);
     }
+  } else {
+    return next();
   }
+};
 
-  return next();
+module.exports.cancel = () => (ctx, next) => {
+  const chatID = ctx.chat.id;
+  const question = questions[chatID];
+  if (question) {
+    delete questions[chatID];
+    return null;
+  } else {
+    return next();
+  }
 };
