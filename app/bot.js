@@ -5,6 +5,7 @@ const commandParts = require('telegraf-command-parts');
 const config = require('../config.json').bot;
 
 const access = require('./middleware/access');
+const ask = require('./middleware/ask');
 const allowedChat = require('./middleware/allowed-chat');
 const messageLogger = require('./middleware/message-logger');
 const deleteMuted = require('./middleware/delete-muted');
@@ -19,8 +20,11 @@ module.exports = class Bot extends Telegraf {
   }
 
   _loadMiddleware() {
+    this.context.ask = ask;
+
     // log received messages
     this.on('message', messageLogger());
+    this.on('message', ask.middleware());
     // leave not allowed groups
     this.on(
       'new_chat_members',
