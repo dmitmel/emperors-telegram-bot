@@ -67,9 +67,9 @@ module.exports = class Bot extends Telegraf {
     this.command('trusted', trusted());
 
     // allow following chat actions only in the private chat
-    this.action(inPrivate());
+    this.action(/.*/, inPrivate());
     // allow following chat actions only for the emperor
-    this.action(access.emperor());
+    this.action(/.*/, access.emperor());
 
     this.action(/^trusted\+$/, trusted.add());
     this.action(/^trusted-(\d+)$/, trusted.delete());
