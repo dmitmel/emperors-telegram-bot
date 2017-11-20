@@ -54,7 +54,9 @@ rules:
   no-self-compare: error
   no-throw-literal: error
   no-unexpected-multiline: off
-  no-unused-expressions: warn
+  no-unused-expressions:
+    - warn
+    - allowShortCircuit: true
   no-unused-labels: warn
   no-useless-concat: warn
   no-useless-escape: warn

@@ -1,10 +1,16 @@
 const questions = {};
 
-module.exports = function(question, options = {}) {
-  const chatID = this.chat.id;
-  if (!questions[chatID]) questions[chatID] = options;
-
-  this.reply(question);
+module.exports = function({ validator, onInvalid } = {}) {
+  return new Promise(resolve => {
+    const chatID = this.chat.id;
+    if (!questions[chatID]) {
+      questions[chatID] = {
+        validator,
+        onSuccess: resolve,
+        onInvalid
+      };
+    }
+  });
 };
 
 exports = module.exports;
@@ -15,12 +21,14 @@ exports.middleware = () => (ctx, next) => {
   if (question) {
     const answer = ctx.message;
 
-    const isAnswerValid = question.validator(answer);
+    const isAnswerValid = question.validator
+      ? question.validator(answer)
+      : true;
     if (isAnswerValid) {
-      question.onSuccess(answer);
+      question.onSuccess && question.onSuccess(answer);
       delete questions[chatID];
     } else {
-      question.onError(answer);
+      question.onInvalid && question.onInvalid(answer);
     }
   }
 
