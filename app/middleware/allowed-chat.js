@@ -1,10 +1,10 @@
-const _ = require('lodash');
 const { imperialChatID } = require('../../config.json').bot;
 
 module.exports = ({ getBotID }) => ctx => {
   const newMembers = ctx.message.new_chat_members;
   // if bot was added to a group
-  if (_.find(newMembers, ['id', getBotID()])) {
+  const botID = getBotID();
+  if (newMembers.find(({ id }) => id === botID)) {
     const chatID = ctx.chat.id;
     if (chatID !== imperialChatID) {
       const chatType = ctx.chat.type;

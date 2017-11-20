@@ -4,12 +4,7 @@
   "description": "Rule your Telegram groups like a real emperor!",
   "main": "index.js",
   "repository": "https://github.com/dmitmel/emperors-telegram-bot",
-  "keywords": [
-    "telegram",
-    "bot",
-    "group",
-    "social"
-  ],
+  "keywords": ["telegram", "bot", "group", "social"],
   "author": "Dmytro Meleshko <dmytro.meleshko@gmail.com>",
   "license": "MIT",
   "bugs": "https://github.com/dmitmel/emperors-telegram-bot/issues",
@@ -20,7 +15,6 @@
   },
   "dependencies": {
     "debug": "^3.1.0",
-    "lodash": "^4.17.4",
     "lowdb": "^1.0.0",
     "supports-color": "^5.0.0",
     "telegraf": "^3.14.1",
