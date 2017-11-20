@@ -1,0 +1,6 @@
+say - say something
+mute - mute someone
+muted - show muted users
+unmute - numute someone
+trusted - manage trusted users
+cancel - cancel question
