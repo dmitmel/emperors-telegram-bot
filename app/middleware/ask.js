@@ -13,9 +13,7 @@ module.exports = function({ validator, onInvalid } = {}) {
   });
 };
 
-exports = module.exports;
-
-exports.middleware = () => (ctx, next) => {
+module.exports.middleware = () => (ctx, next) => {
   const chatID = ctx.chat.id;
   const question = questions[chatID];
   if (question) {

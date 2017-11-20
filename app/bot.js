@@ -10,6 +10,7 @@ const allowedChat = require('./middleware/allowed-chat');
 const messageLogger = require('./middleware/message-logger');
 const deleteMuted = require('./middleware/delete-muted');
 const inPrivate = require('./middleware/in-private');
+const trusted = require('./commands/trusted');
 const { mute, muted, unmute } = require('./commands/mute');
 const say = require('./commands/say');
 
@@ -55,6 +56,10 @@ module.exports = class Bot extends Telegraf {
     this.command('mute', mute());
     this.command('muted', muted());
     this.command('unmute', unmute());
+
+    this.command('trusted', trusted());
+    this.action(/^trusted\+$/, trusted.add());
+    this.action(/^trusted-(\d+)$/, trusted.delete());
   }
 
   start() {
