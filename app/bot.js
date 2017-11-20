@@ -27,9 +27,12 @@ module.exports = class Bot extends Telegraf {
     // leave not allowed chats
     this.on(
       'new_chat_members',
-      allowedChat({
-        getBotID: () => this.options.id
-      })
+      allowedChat(
+        // bot fetches its ID and saves it into `this.options` in the `start`
+        // method, so `allowedChat` middleware will get it automatically due to
+        // object references
+        this.options
+      )
     );
 
     // kick members added by ordinary users
