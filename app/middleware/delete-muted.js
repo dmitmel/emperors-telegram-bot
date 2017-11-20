@@ -1,11 +1,7 @@
-const db = require('../db');
+const muted = require('../db').get('muted');
 
-module.exports = () => (ctx, next) => {
-  if (ctx.chat.type !== 'private') {
-    const muted = db.get('muted').value();
-    if (muted.find(user => user === ctx.from.id))
-      ctx.deleteMessage(ctx.message.id);
-  }
-
-  return next();
-};
+module.exports = () => (ctx, next) =>
+  ctx.chat.type !== 'private' &&
+  muted.find(user => user === ctx.from.username).value()
+    ? ctx.deleteMessage(ctx.message.id)
+    : next();

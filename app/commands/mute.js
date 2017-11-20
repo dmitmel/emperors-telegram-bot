@@ -17,7 +17,7 @@ module.exports = {
       .map(user => `@${user}`)
       .join(', ')
       .value();
-    if (muted) ctx.reply(muted);
+    return muted && ctx.reply(muted);
   },
 
   unmute: () => ctx => {
@@ -25,7 +25,7 @@ module.exports = {
     if (user) {
       db
         .get('muted')
-        .remove(otherUser => otherUser === user)
+        .pull(user)
         .write();
     } else {
       db.set('muted', []).write();

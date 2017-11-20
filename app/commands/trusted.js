@@ -30,40 +30,40 @@ function createUserButton({ first_name, last_name, username }) {
 }
 
 function updateKeyboard(ctx) {
-  createKeyboard(ctx).then(keyboard => ctx.editMessageReplyMarkup(keyboard));
+  return createKeyboard(ctx).then(keyboard =>
+    ctx.editMessageReplyMarkup(keyboard)
+  );
 }
 
-module.exports = () => ctx => {
+module.exports = () => ctx =>
   createKeyboard(ctx).then(keyboard =>
-    ctx.reply('Here are trusted people:', keyboard.extra())
+    ctx.reply('Here are trusted users:', keyboard.extra())
   );
-};
 
 module.exports.add = () => ctx => {
-  ctx.answerCallbackQuery();
-
-  ctx.reply('Please, send me a contact');
   ctx
-    .ask({
-      validator: msg => msg.contact,
-      onInvalid: () => {
-        ctx.reply('Please, send me a contact');
-      }
-    })
+    .answerCallbackQuery()
+    .then(() => ctx.reply('Please, send me a contact'))
+    .then(() =>
+      ctx.ask({
+        validator: msg => msg.contact,
+        onInvalid: () => ctx.reply('Please, send me a contact')
+      })
+    )
     .then(({ contact }) => {
       const userID = contact.user_id;
-      if (trustedIDs.includes(userID).value()) return;
+      if (trustedIDs.includes(userID).value()) return undefined;
 
       trustedIDs.push(userID).write();
-      updateKeyboard(ctx);
+      return updateKeyboard(ctx);
     });
 };
 
 module.exports.delete = () => ctx => {
-  ctx.answerCallbackQuery();
+  ctx.answerCallbackQuery().then(() => {
+    let userID = parseInt(ctx.match[1], 10);
+    trustedIDs.pull(userID).write();
 
-  let userID = parseInt(ctx.match[1], 10);
-  trustedIDs.pull(userID).write();
-
-  updateKeyboard(ctx);
+    return updateKeyboard(ctx);
+  });
 };

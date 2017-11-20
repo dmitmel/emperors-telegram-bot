@@ -38,7 +38,7 @@ module.exports.cancel = () => (ctx, next) => {
   const question = questions[chatID];
   if (question) {
     delete questions[chatID];
-    return null;
+    return undefined;
   } else {
     return next();
   }
