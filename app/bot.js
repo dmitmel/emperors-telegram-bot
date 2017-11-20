@@ -21,34 +21,38 @@ module.exports = class Bot extends Telegraf {
   }
 
   _loadMiddleware() {
-    this.context.ask = ask;
-
     // log received messages
     this.on('message', messageLogger());
+
+    this.context.ask = ask;
     this.on('message', ask.middleware());
-    // leave not allowed groups
+
+    // leave not allowed chats
     this.on(
       'new_chat_members',
       allowedChat({
         getBotID: () => this.options.id
       })
     );
-    // kick members added by non-admins
+
+    // kick members added by ordinary users
     this.on(
       'new_chat_members',
-      access.emperor({
+      access.trustedAndEmperor({
         onAccessDenied: ctx => {
           const newMembers = ctx.message.new_chat_members;
           newMembers.forEach(({ id }) => ctx.kickChatMember(id));
         }
       })
     );
+
     // delete messages from muted users
     this.on('message', deleteMuted());
+
     // allow commands only in the private chat
     this.command(inPrivate());
-    // allow commands only for admins
-    this.command(access.emperor());
+    // allow commands only for trusted and the emperor
+    this.command(access.trustedAndEmperor());
     // parse commands only if user has access to them
     this.command(commandParts());
 
@@ -57,7 +61,16 @@ module.exports = class Bot extends Telegraf {
     this.command('muted', muted());
     this.command('unmute', unmute());
 
+    // allow following commands only for the emperor
+    this.command(access.emperor());
+
     this.command('trusted', trusted());
+
+    // allow following chat actions only in the private chat
+    this.action(inPrivate());
+    // allow following chat actions only for the emperor
+    this.action(access.emperor());
+
     this.action(/^trusted\+$/, trusted.add());
     this.action(/^trusted-(\d+)$/, trusted.delete());
   }
