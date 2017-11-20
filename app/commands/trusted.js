@@ -1,6 +1,5 @@
 const { Markup } = require('telegraf');
-
-const trustedIDs = new Set();
+const trustedIDs = require('../db').get('trusted');
 
 function createKeyboard(ctx) {
   return fetchTrusted(ctx).then(trusted => {
@@ -18,12 +17,9 @@ function createKeyboard(ctx) {
 }
 
 function fetchTrusted(ctx) {
-  const promises = [];
-  trustedIDs.forEach(userID => {
-    const promise = ctx.telegram.getChat(userID);
-    promises.push(promise);
-  });
-  return Promise.all(promises);
+  return Promise.all(
+    trustedIDs.value().map(userID => ctx.telegram.getChat(userID))
+  );
 }
 
 function createUserButton({ first_name, last_name, username }) {
@@ -53,8 +49,11 @@ module.exports.add = () => ctx => {
       onInvalid: () => ctx.reply('Please, send me a contact')
     })
     .then(({ contact }) => {
-      trustedIDs.add(contact.user_id);
-      updateKeyboard();
+      const userID = contact.user_id;
+      if (trustedIDs.includes(userID).value()) return;
+
+      trustedIDs.push(userID).write();
+      updateKeyboard(ctx);
     });
 };
 
@@ -62,7 +61,7 @@ module.exports.delete = () => ctx => {
   ctx.answerCallbackQuery();
 
   let userID = parseInt(ctx.match[1], 10);
-  trustedIDs.delete(userID);
+  trustedIDs.pull(userID).write();
 
   updateKeyboard(ctx);
 };
