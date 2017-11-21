@@ -8,10 +8,9 @@ const access = require('./middleware/access');
 const ask = require('./middleware/ask');
 const allowedChat = require('./middleware/allowed-chat');
 const messageLogger = require('./middleware/message-logger');
-const deleteMuted = require('./middleware/delete-muted');
 const inPrivate = require('./middleware/in-private');
 const trusted = require('./commands/trusted');
-const { mute, muted, unmute } = require('./commands/mute');
+const muted = require('./commands/muted');
 const say = require('./commands/say');
 
 module.exports = class Bot extends Telegraf {
@@ -48,7 +47,7 @@ module.exports = class Bot extends Telegraf {
     );
 
     // delete messages from muted users
-    this.on('message', deleteMuted());
+    this.on('message', muted.middleware());
 
     this.context.ask = ask;
     this.command('cancel', ask.cancel());
@@ -61,18 +60,23 @@ module.exports = class Bot extends Telegraf {
     // parse commands only if user has access to them
     this.command(commandParts());
 
+    // ignore chat actions only in groups
+    this.action(/.*/, inPrivate());
+    // allow following chat actions only for trusted and the emperor
+    this.action(/.*/, access.trustedAndEmperor());
+
     this.command('say', say());
-    this.command('mute', mute());
+
     this.command('muted', muted());
-    this.command('unmute', unmute());
+
+    this.action(/^muted\+$/, muted.add());
+    this.action(/^muted-(\d+)$/, muted.delete());
 
     // allow following commands only for the emperor
     this.command(access.emperor());
 
     this.command('trusted', trusted());
 
-    // allow following chat actions only in the private chat
-    this.action(/.*/, inPrivate());
     // allow following chat actions only for the emperor
     this.action(/.*/, access.emperor());
 
