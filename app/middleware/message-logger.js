@@ -1,6 +1,54 @@
 const log = require('debug')('emperors-bot:messages');
 const replicators = require('telegraf/lib/helpers/replicators');
 
+module.exports = () => (ctx, next) => {
+  if (ctx.editedMessage) log(formatMessage(ctx.editedMessage));
+  else if (ctx.message) log(formatMessage(ctx.message));
+  return next();
+};
+
+function formatMessage(msg) {
+  const time = formatMessageTime(msg);
+  const user = formatUser(msg.from);
+  const chat = formatChat(msg.chat);
+
+  let content = '';
+
+  if (msg.forward_from) {
+    content += ` (fwd from ${formatUser(msg.forward_from)})`;
+  }
+
+  if (msg.reply_to_message) {
+    content += ` (re to ${msg.reply_to_message.message_id})`;
+  }
+
+  if (msg.edit_date) {
+    content += ' (edit)';
+  }
+
+  if (msg.text) {
+    content += `> ${msg.text}`;
+  } else if (msg.new_chat_members) {
+    content += `: added ${msg.new_chat_members.map(formatUser).join(', ')}`;
+  } else if (msg.left_chat_member) {
+    content += `: removed ${formatUser(msg.left_chat_member)}`;
+  } else if (msg.new_chat_title) {
+    content += `: changed chat name to "${msg.new_chat_title}"`;
+  } else if (msg.new_chat_photo) {
+    content += `: updated chat photo`;
+  } else if (msg.contact) {
+    content += `: contact of ${formatUser(msg.contact)}`;
+  } else if (msg.location) {
+    const { latitude, longitude } = msg.location;
+    content += `: location on ${latitude} ${longitude}`;
+  } else {
+    const type = getMessageType(msg);
+    content += type ? `: ${type}` : ': message';
+  }
+
+  return `${msg.message_id} [${time}] ${user} in ${chat}${content}`;
+}
+
 const MESSAGE_TYPES = Object.keys(replicators.copyMethods);
 function getMessageType(msg) {
   return MESSAGE_TYPES.find(type => msg[type]);
@@ -15,8 +63,10 @@ function formatMessageTime({ date }) {
   return `${hours}:${minutes}`;
 }
 
-function formatUser({ username }) {
-  return `@${username}`;
+function formatUser({ first_name, last_name }) {
+  let name = first_name;
+  if (last_name) name += ` ${last_name}`;
+  return name;
 }
 
 function formatChat({ type, title }) {
@@ -33,18 +83,3 @@ function formatChat({ type, title }) {
       return 'unknown chat';
   }
 }
-
-module.exports = () => (ctx, next) => {
-  const msg = ctx.message;
-  const type = getMessageType(msg);
-
-  if (type) {
-    const time = formatMessageTime(msg);
-    const user = formatUser(ctx.from);
-    const chat = formatChat(ctx.chat);
-    const contents = type === 'text' ? msg.text : `(${type})`;
-    log(`[${time}] ${user} in ${chat}: ${contents}`);
-  }
-
-  return next();
-};
