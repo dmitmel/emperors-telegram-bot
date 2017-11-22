@@ -23,6 +23,7 @@ module.exports = class Bot extends Telegraf {
     // log received messages
     this.on('message', messageLogger());
     this.on('edited_message', messageLogger());
+    this.on('callback_query', messageLogger.cbQuery());
 
     // leave not allowed chats
     this.on(

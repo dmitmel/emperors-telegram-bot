@@ -2,8 +2,14 @@ const log = require('debug')('emperors-bot:messages');
 const replicators = require('telegraf/lib/helpers/replicators');
 
 module.exports = () => (ctx, next) => {
-  if (ctx.editedMessage) log(formatMessage(ctx.editedMessage));
-  else if (ctx.message) log(formatMessage(ctx.message));
+  const msg = ctx.editedMessage || ctx.message;
+  if (msg) log(formatMessage(msg));
+  return next();
+};
+
+module.exports.cbQuery = () => (ctx, next) => {
+  const cbQuery = ctx.callbackQuery;
+  if (cbQuery) log(formatCbQuery(cbQuery));
   return next();
 };
 
@@ -27,7 +33,7 @@ function formatMessage(msg) {
   }
 
   if (msg.text) {
-    content += `> ${msg.text}`;
+    content += ` > ${msg.text}`;
   } else if (msg.new_chat_members) {
     content += `: added ${msg.new_chat_members.map(formatUser).join(', ')}`;
   } else if (msg.left_chat_member) {
@@ -47,6 +53,19 @@ function formatMessage(msg) {
   }
 
   return `${msg.message_id} [${time}] ${user} in ${chat}${content}`;
+}
+
+function formatCbQuery(cbQuery) {
+  const user = formatUser(cbQuery.from);
+
+  if (cbQuery.message) {
+    const msg = cbQuery.message;
+    const chat = formatChat(msg.chat);
+
+    return `${user} in ${chat} (cb query from ${msg.message_id}): ${cbQuery.data}`;
+  } else {
+    return `${user} (cb query): ${cbQuery.data}`;
+  }
 }
 
 const MESSAGE_TYPES = Object.keys(replicators.copyMethods);
